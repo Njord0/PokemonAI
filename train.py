@@ -76,7 +76,7 @@ def do_training():
     callbacks=[TrainingCallback()]
     )
 
-    model.save("exort_model.h5")
+    model.save("model.h5")
 
     for image_path in test_dir.glob('*.jpg'):
         img, label = process_path(str(image_path))

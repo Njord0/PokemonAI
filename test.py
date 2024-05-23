@@ -6,7 +6,7 @@ from common import process_path
 from common import class_names, test_dir
 
 def do_test():
-    model = keras.models.load_model('exort_model.h5')
+    model = keras.models.load_model('model.h5')
 
     for image_path in test_dir.glob('*.jpg'):
         img, label = process_path(str(image_path))

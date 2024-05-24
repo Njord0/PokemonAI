@@ -100,14 +100,17 @@ def process_path(file_path):
     img = decode_img(img)
     return img, label
 
+data_preparation = Sequential([
+    layers.RandomZoom(0.3, 0.3,fill_mode="nearest"),
+    layers.RandomRotation(0.2),
+    layers.RandomFlip("horizontal_and_vertical"),
+])
+
 def create_model(num_class: int):
-    # Standardisation des données ( a changer)
     model = Sequential([
-        #enleve le rgb et passe sur une plage [0,1]
+        #Enleve le rgb et passe sur une plage [0,1]
         layers.Rescaling(1./255, offset=-1),
-        #layers.RandomFlip("horizontal_and_vertical"),
-        layers.RandomZoom(0.3, 0.3,fill_mode="nearest"),
-        layers.RandomRotation(0.2),
+        data_preparation,
 
         layers.Conv2D(4, (3, 3), padding='same', activation='relu'),
         layers.MaxPooling2D(),
@@ -117,6 +120,7 @@ def create_model(num_class: int):
 
         layers.Conv2D(16, (5, 5), padding='same', activation='relu'),
         layers.MaxPooling2D(),
+
         layers.Dropout(0.5),
         
         layers.Flatten(),

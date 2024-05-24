@@ -17,7 +17,6 @@ data_dir = pathlib.Path("pokemons/")
 test_dir = pathlib.Path("test_data/")
 
 class_names = np.array(sorted([item.name for item in data_dir.glob('*') if item.is_dir() and item.name != ".ipynb_checkpoints"]))
-from multiprocessing import Process
 
 class TrainingCallback(callbacks.Callback):
 
@@ -32,12 +31,17 @@ class TrainingCallback(callbacks.Callback):
         plt.ion()
         plt.show()
 
+        plt.figure(1)
         plt.xlabel('Epoch')
         plt.ylabel('Value')
-
         plt.plot(self.val_loss, 'b-', label='Validation Loss')
-        plt.plot(self.val_accuracy, 'r-', label='Validation Accuracy')
         plt.plot(self.loss, 'g-', label='Loss')
+        plt.legend()
+
+        plt.figure(2)
+        plt.xlabel('Epoch')
+        plt.ylabel('Value')
+        plt.plot(self.val_accuracy, 'r-', label='Validation Accuracy')
         plt.plot(self.accuracy, 'm-', label='Accuracy')
 
         plt.legend()
@@ -49,19 +53,33 @@ class TrainingCallback(callbacks.Callback):
         self.val_loss.append(logs['val_loss'])
         self.val_accuracy.append(logs['val_accuracy'])
 
-        plt.xlim(0, len(self.loss)) # current number of epoch
-        plt.ylim(0, max([
-            max(self.loss), max(self.accuracy), max(self.val_loss), max(self.val_accuracy)
-        ]))
+        self.plot_figure1(epoch)
+        self.plot_figure2(epoch)
+
+
+    def plot_figure1(self, epoch: int):
+        plt.figure(1)
+        plt.xlim(0, 250) 
+        plt.ylim(0, 5)
         
         plt.plot(self.val_loss, 'b-', label='Validation Loss')
-        plt.plot(self.val_accuracy, 'r-', label='Validation Accuracy')
         plt.plot(self.loss, 'g-', label='Loss')
+
+        plt.draw()
+        plt.pause(0.1)
+        plt.savefig(f'epochs/epoch_loss{epoch}.png')
+
+    def plot_figure2(self, epoch: int):
+        plt.figure(2)
+        plt.xlim(0, 250)
+        plt.ylim(0, 1)
+
+        plt.plot(self.val_accuracy, 'r-', label='Validation Accuracy')
         plt.plot(self.accuracy, 'm-', label='Accuracy')
 
         plt.draw()
-        plt.pause(0.1) # Give enough time to render
-        plt.savefig(f'epochs/epoch{epoch}.png')
+        plt.pause(0.1)
+        plt.savefig(f'epochs/epoch_accuracy{epoch}.png')
 
     def on_train_end(self, logs=None):
         plt.ioff()
@@ -88,16 +106,16 @@ def create_model(num_class: int):
         #enleve le rgb et passe sur une plage [0,1]
         layers.Rescaling(1./255, offset=-1),
         #layers.RandomFlip("horizontal_and_vertical"),
-        layers.RandomZoom(0.3,0.3,fill_mode="nearest"),
+        layers.RandomZoom(0.3, 0.3,fill_mode="nearest"),
         layers.RandomRotation(0.2),
 
-        layers.Conv2D(8, 14, padding='same', activation='relu'),
+        layers.Conv2D(4, (3, 3), padding='same', activation='relu'),
         layers.MaxPooling2D(),
 
-        layers.Conv2D(16, 6, padding='same', activation='relu'),
+        layers.Conv2D(8, (3, 3), padding='same', activation='relu'),
         layers.MaxPooling2D(),
 
-        layers.Conv2D(32, 3, padding='same', activation='relu'),
+        layers.Conv2D(16, (5, 5), padding='same', activation='relu'),
         layers.MaxPooling2D(),
         layers.Dropout(0.5),
         

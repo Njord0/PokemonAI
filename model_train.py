@@ -12,23 +12,13 @@ def do_training():
 
     image_count = len(images)
 
-    train_ds, val_ds = tf.keras.utils.image_dataset_from_directory(
-        str(data_dir),
-        labels='inferred',
-        validation_split=0.1,
-        subset="both",
-        seed=1,
-        image_size=(224, 224),
-        batch_size=32
-    )
-
     AUTOTUNE = tf.data.AUTOTUNE
 
     # Préparation des données
     list_ds = tf.data.Dataset.list_files(str(data_dir/'*/*'), shuffle=False)
     list_ds = list_ds.shuffle(image_count, reshuffle_each_iteration=False)
 
-    val_size = int(image_count * 0.2)
+    val_size = int(image_count * 0.3)
     train_ds = list_ds.skip(val_size)
     val_ds = list_ds.take(val_size)
 
@@ -51,11 +41,11 @@ def do_training():
     model = create_model(num_classes)
 
     # Choix du modele peut varier mais adam reste le meilleur
-    model.compile(optimizer='adam',
+    model.compile(optimizer='sgd',
                 loss=tf.keras.losses.SparseCategoricalCrossentropy(from_logits=True),
                 metrics=['accuracy'])
 
-    epochs_count = 60
+    epochs_count = 250
     model.fit(
         train_ds,
         validation_data=val_ds,

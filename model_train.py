@@ -40,7 +40,7 @@ def do_training():
 
     model = create_model(num_classes)
 
-    # Choix du modele peut varier mais adam reste le meilleur
+    # Compilation avec le modèle
     model.compile(optimizer='sgd',
                 loss=tf.keras.losses.SparseCategoricalCrossentropy(from_logits=True),
                 metrics=['accuracy'])

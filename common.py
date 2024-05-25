@@ -100,7 +100,7 @@ def process_path(file_path):
     img = decode_img(img)
     return img, label
 
-data_preparation = Sequential([
+data_augmentation = Sequential([
     layers.RandomZoom(0.3, 0.3,fill_mode="nearest"),
     layers.RandomRotation(0.2),
     layers.RandomFlip("horizontal_and_vertical"),
@@ -110,7 +110,7 @@ def create_model(num_class: int):
     model = Sequential([
         #Enleve le rgb et passe sur une plage [0,1]
         layers.Rescaling(1./255, offset=-1),
-        data_preparation,
+        data_augmentation,
 
         layers.Conv2D(4, (3, 3), padding='same', activation='relu'),
         layers.MaxPooling2D(),

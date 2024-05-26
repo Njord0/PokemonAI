@@ -1,6 +1,8 @@
 from keras import layers
 from keras.models import Sequential
 from keras import callbacks
+import keras_cv
+
 import tensorflow as tf
 
 tf.get_logger().setLevel('INFO')
@@ -59,7 +61,7 @@ class TrainingCallback(callbacks.Callback):
 
     def plot_figure1(self, epoch: int):
         plt.figure(1)
-        plt.xlim(0, 250) 
+        plt.xlim(0, 35) 
         plt.ylim(0, 5)
         
         plt.plot(self.val_loss, 'b-', label='Validation Loss')
@@ -71,7 +73,7 @@ class TrainingCallback(callbacks.Callback):
 
     def plot_figure2(self, epoch: int):
         plt.figure(2)
-        plt.xlim(0, 250)
+        plt.xlim(0, 35)
         plt.ylim(0, 1)
 
         plt.plot(self.val_accuracy, 'r-', label='Validation Accuracy')
@@ -101,9 +103,10 @@ def process_path(file_path):
     return img, label
 
 data_augmentation = Sequential([
-    layers.RandomZoom(0.3, 0.3,fill_mode="nearest"),
-    layers.RandomRotation(0.2),
-    layers.RandomFlip("horizontal_and_vertical"),
+    # keras_cv.layers.Grayscale(output_channels=1),
+    layers.RandomZoom(0.3, fill_mode="nearest"),
+    layers.RandomRotation(0.1),
+    layers.RandomFlip("vertical"),
 ])
 
 def create_model(num_class: int):
@@ -112,16 +115,16 @@ def create_model(num_class: int):
         layers.Rescaling(1./255, offset=-1),
         data_augmentation,
 
-        layers.Conv2D(4, (3, 3), padding='same', activation='relu'),
+        layers.Conv2D(16, 3, padding='same', activation='relu'),
         layers.MaxPooling2D(),
 
-        layers.Conv2D(8, (3, 3), padding='same', activation='relu'),
+        layers.Conv2D(32, 3, padding='same', activation='relu'),
         layers.MaxPooling2D(),
 
-        layers.Conv2D(16, (5, 5), padding='same', activation='relu'),
+        layers.Conv2D(64, 3, padding='same', activation='relu'),
         layers.MaxPooling2D(),
 
-        layers.Dropout(0.5),
+        layers.Dropout(0.1),
         
         layers.Flatten(),
 

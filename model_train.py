@@ -41,11 +41,11 @@ def do_training():
     model = create_model(num_classes)
 
     # Compilation avec le modèle
-    model.compile(optimizer='sgd',
+    model.compile(optimizer='adam',
                 loss=tf.keras.losses.SparseCategoricalCrossentropy(from_logits=True),
                 metrics=['accuracy'])
 
-    epochs_count = 250
+    epochs_count = 35
     model.fit(
         train_ds,
         validation_data=val_ds,

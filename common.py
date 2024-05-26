@@ -108,7 +108,7 @@ data_augmentation = Sequential([
     layers.RandomFlip("vertical"),
 ])
 
-def create_model(num_class: int):
+def create_model(num_classes: int):
     model = Sequential([
         layers.Rescaling(1./255, offset=-1),
         data_augmentation,
@@ -127,7 +127,7 @@ def create_model(num_class: int):
         layers.Flatten(),
 
         layers.Dense(128, activation='relu'),
-        layers.Dense(num_class)
+        layers.Dense(num_classes)
     ])
 
 

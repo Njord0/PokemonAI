@@ -103,7 +103,6 @@ def process_path(file_path):
     return img, label
 
 data_augmentation = Sequential([
-    #keras_cv.layers.Grayscale(output_channels=1),
     layers.RandomZoom(0.3, fill_mode="nearest"),
     layers.RandomRotation(0.1),
     layers.RandomFlip("vertical"),

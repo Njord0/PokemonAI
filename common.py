@@ -103,7 +103,7 @@ def process_path(file_path):
     return img, label
 
 data_augmentation = Sequential([
-    # keras_cv.layers.Grayscale(output_channels=1),
+    #keras_cv.layers.Grayscale(output_channels=1),
     layers.RandomZoom(0.3, fill_mode="nearest"),
     layers.RandomRotation(0.1),
     layers.RandomFlip("vertical"),
@@ -111,7 +111,6 @@ data_augmentation = Sequential([
 
 def create_model(num_class: int):
     model = Sequential([
-        #Enleve le rgb et passe sur une plage [0,1]
         layers.Rescaling(1./255, offset=-1),
         data_augmentation,
 
